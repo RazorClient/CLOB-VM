@@ -1,19 +1,22 @@
-// CLOB/storage/order_queue.go
 package storage
 
 // OrderQueue represents a doubly linked list of orders
 type OrderQueue struct {
-    head *Order // Unexported
-    tail *Order // Unexported
-    Size int
+    head *Order 
+    tail *Order 
+    Size int    // Number of orders in the queue
 }
 
 // NewOrderQueue creates a new empty order queue
+// Returns a pointer to the newly created OrderQueue
 func NewOrderQueue() *OrderQueue {
     return &OrderQueue{}
 }
 
 // Enqueue adds an order to the end of the queue
+// Takes a pointer to an Order as input
+// If the queue is empty, it sets both head and tail to the new order
+// Otherwise, it updates the tail and links the new order
 func (oq *OrderQueue) Enqueue(order *Order) {
     if oq.tail == nil {
         oq.head = order
@@ -27,6 +30,7 @@ func (oq *OrderQueue) Enqueue(order *Order) {
 }
 
 // Dequeue removes and returns the order from the front of the queue
+// Returns the order at the front of the queue or nil if the queue is empty
 func (oq *OrderQueue) Dequeue() *Order {
     if oq.head == nil {
         return nil
@@ -44,6 +48,9 @@ func (oq *OrderQueue) Dequeue() *Order {
 }
 
 // Remove removes a specific order from the queue
+// Takes a pointer to an Order as input
+// Adjusts the next and prev pointers of surrounding orders
+// Updates head or tail if necessary
 func (oq *OrderQueue) Remove(order *Order) {
     if order.prev != nil {
         order.prev.next = order.next

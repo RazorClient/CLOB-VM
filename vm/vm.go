@@ -62,3 +62,19 @@ func (vm *MatchingEngineVM) GetOrderBook() *storage.OrderBook {
 func (vm *MatchingEngineVM) GetRules() *genesis.Rules {
 	return vm.Rules
 }
+
+
+func New(options ...vm.Option) (*vm.VM, error) {
+	options = append(options, With()) // Add MorpheusVM API
+	return defaultvm.New(
+		consts.Version,
+		genesis.DefaultGenesisFactory{},
+		&storage.BalanceHandler{},
+		metadata.NewDefaultManager(),
+		ActionParser,
+		AuthParser,
+		OutputParser,
+		auth.Engines(),
+		options...,
+	)
+}

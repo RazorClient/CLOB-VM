@@ -27,6 +27,6 @@ type Order struct {
     Quantity  float64
     Timestamp time.Time
     OrderType OrderType
-    next      *Order        // For linked list (unexported)
-    prev      *Order        // For linked list (unexported)
+    next      *Order        // For linked list 
+    prev      *Order        // For linked list 
 }

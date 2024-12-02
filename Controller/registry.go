@@ -12,7 +12,10 @@ import (
 	"CLOB/consts"
 )
 
-// Setup types
+// init initializes the Action and Auth registries in the consts package.
+// It registers various action types and authentication methods, collecting
+// any errors that occur during the registration process. If any errors
+// are encountered, the application will panic to prevent incorrect startup.
 func init() {
 	// Initialize the Action and Auth registries in the consts package
 	consts.ActionRegistry = codec.NewTypeParser[chain.Action, *codec.Message]()

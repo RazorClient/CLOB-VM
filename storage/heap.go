@@ -1,8 +1,10 @@
-// CLOB/storage/heap.go
 package storage
 
-// BuyHeap implements heap.Interface for max-heap (buy side)
+// BuyHeap implements a max-heap for managing buy orders.
 type BuyHeap []*PriceLevel
+
+// SellHeap implements a min-heap for managing sell orders.
+type SellHeap []*PriceLevel
 
 func (bh BuyHeap) Len() int            { return len(bh) }
 func (bh BuyHeap) Swap(i, j int)       { bh[i], bh[j] = bh[j], bh[i] }
@@ -15,9 +17,6 @@ func (bh *BuyHeap) Pop() interface{} {
     *bh = old[0 : n-1]
     return x
 }
-
-// SellHeap implements heap.Interface for min-heap (sell side)
-type SellHeap []*PriceLevel
 
 func (sh SellHeap) Len() int            { return len(sh) }
 func (sh SellHeap) Swap(i, j int)       { sh[i], sh[j] = sh[j], sh[i] }
