@@ -1,4 +1,11 @@
-// controller/controller.go
+
+/*
+Package controller provides the implementation of a Controller that manages
+the interactions between the virtual machine (VM), storage, and genesis
+configuration for a blockchain application. It implements the vm.Controller
+interface, ensuring that it adheres to the expected behavior for managing
+blockchain operations.
+*/
 
 package controller
 
@@ -30,6 +37,9 @@ import (
 var _ vm.Controller = (*Controller)(nil)
 
 // Controller manages the VM and its interactions with the storage and genesis
+// configuration. It is responsible for initializing the VM, loading
+// configurations, handling accepted and rejected blocks, and managing
+// state transitions.
 type Controller struct {
 	inner        *vm.VM          // The underlying VM instance
 	snowCtx      *snow.Context    // Context for snow operations
@@ -40,12 +50,17 @@ type Controller struct {
 	metaDB       database.Database  // Database for metadata storage
 }
 
-// New creates a new instance of the VM with the Controller
+// New creates a new instance of the VM with the Controller. It initializes
+// the Controller and returns a pointer to the VM instance.
 func New() *vm.VM {
 	return vm.New(&Controller{}, version.Version)
 }
 
-// Initialize sets up the Controller by loading configurations, genesis, and initializing databases
+// Initialize sets up the Controller by loading configurations, genesis,
+// and initializing databases. It returns various components needed for
+// the VM's operation, including configuration, genesis information,
+// builders, gossipers, and databases. It also handles errors during
+// initialization.
 func (c *Controller) Initialize(
 	inner *vm.VM,
 	snowCtx *snow.Context,
@@ -65,6 +80,7 @@ func (c *Controller) Initialize(
 	chain.AuthRegistry,    // Registry for authentication
 	error,             // Error if initialization fails
 ) {
+	// Set the inner VM and snow context
 	c.inner = inner
 	c.snowCtx = snowCtx
 	c.stateManager = &StateManager{}
@@ -150,17 +166,22 @@ func (c *Controller) Initialize(
 	return c.config, c.genesis, build, gossip, blockDB, stateDB, apis, consts.ActionRegistry, consts.AuthRegistry, nil
 }
 
-// Rules returns the chain.Rules interface based on the genesis configuration
+// Rules returns the chain.Rules interface based on the genesis configuration.
+// It provides the rules that govern the blockchain's behavior.
 func (c *Controller) Rules(t int64) chain.Rules {
 	return c.genesis.Rules(t)
 }
 
-// StateManager returns the chain.StateManager interface
+// StateManager returns the chain.StateManager interface. It provides access
+// to the state management functionalities of the blockchain.
 func (c *Controller) StateManager() chain.StateManager {
 	return c.stateManager
 }
 
-// Accepted processes accepted blocks and stores transaction results
+// Accepted processes accepted blocks and stores transaction results. It
+// iterates through the transactions in the block, storing their results
+// in the metadata database and updating metrics based on the transaction
+// actions.
 func (c *Controller) Accepted(ctx context.Context, blk *chain.StatelessBlock) error {
 	batch := c.metaDB.NewBatch()
 	defer batch.Reset()
@@ -193,12 +214,15 @@ func (c *Controller) Accepted(ctx context.Context, blk *chain.StatelessBlock) er
 	return batch.Write()
 }
 
-// Rejected handles rejected blocks (no-op in this implementation)
+// Rejected handles rejected blocks. This implementation is a no-op,
+// meaning it does not perform any actions when a block is rejected.
 func (*Controller) Rejected(context.Context, *chain.StatelessBlock) error {
 	return nil
 }
 
-// Shutdown gracefully shuts down the controller (handled by VM)
+// Shutdown gracefully shuts down the controller. This implementation
+// does not close any databases provided during initialization, as the
+// VM is responsible for closing them.
 func (*Controller) Shutdown(context.Context) error {
 	// Do not close any databases provided during initialization. The VM will
 	// close any databases you're provided.

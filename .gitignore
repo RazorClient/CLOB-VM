@@ -1,0 +1,23 @@
+# Go binaries
+*.exe
+*.exe~
+*.out
+*.test
+
+# Dependency directories
+vendor/
+
+# Go workspace files
+go.work
+go.mod
+go.sum
+
+# IDE files
+.idea/
+*.vscode/
+
+# Logs
+*.log
+
+# Temporary files
+*.tmp
